@@ -72,6 +72,12 @@ textarea {
 
 .Todo-body > h6 {
   cursor: pointer;
+  margin-top: auto;
+}
+
+.Todo-body > a {
+  font-size: 8px;
+  margin-top: auto;
 }
 
 .Todo-body {
@@ -82,6 +88,7 @@ textarea {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  padding-bottom: 5px;
 }
 
 .Todo-description {

@@ -1,27 +1,44 @@
+import { addDoc, collection } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { nanoid } from 'nanoid';
 import React, { useContext, useRef, useState } from 'react';
 import { Context } from '../App';
+import { db, storage } from '../firebase';
 
 export default function CreateTodo({closeCreate}) {
   const context = useContext(Context);
   const fileInput = useRef();
   const [todo, setTodo] = useState({
+    id: nanoid(),
     title: '',
     description: '',
     date: '',
-    file: null
+    file: null,
+    fileRef: null
   });
 
-  function saveTodo() {
-    context.addTodo(todo);
-    setTodo({
-      title: '',
-      description: '',
-      date: '',
-      file: fileInput.current.files[0]
+  async function saveTodo() {
+    const storage = getStorage();
+    const path = `todos/${todo.id}/${fileInput.current.files[0].name}`;
+    const fileRef = ref(storage, path)
+    uploadBytes(fileRef, fileInput.current.files[0]).then((snapshot) => {
+      console.log('Uploaded a blob or file!', snapshot);
+      getDownloadURL(ref(storage, path))
+      .then((url) => {
+        console.log(url)
+        context.addTodo({
+          ...todo,
+          file: fileInput.current.files[0].name,
+          fileRef: url
+        });
+        closeCreate();
+      });
     });
-    closeCreate();
+
+
     console.log(fileInput.current.files[0]);
   };
+
 
   return (
     <div className='Create-todo'>

@@ -8,7 +8,7 @@ export default function ListTodo() {
   return (
     <ul>
       {context.todos.map((e, i) => (
-        <li key={i}>
+        <li key={e.id}>
           <Todo item={e}/>
         </li>
       ))}
