@@ -1,4 +1,4 @@
-import { child, get, getDatabase, onValue, ref, set } from 'firebase/database';
+import { getDatabase, onValue, ref, remove, set } from 'firebase/database';
 import { createContext, useEffect, useState } from 'react';
 import './App.css';
 import CreateTodo from './components/CreateTodo';
@@ -26,6 +26,12 @@ export default function App() {
     setItem(todo);
   };
 
+  function deleteTodo(id) {
+    const db = getDatabase();
+    const todoRef = ref(db, 'todos/' + id);
+    remove(todoRef);
+  };
+
   function writeTodoToDB(todo) {
     const db = getDatabase(app);
     set(ref(db, 'todos/' + todo.id), {
@@ -34,22 +40,12 @@ export default function App() {
       description: todo.description,
       date: todo.date,
       file: todo.file,
-      fileRef: todo.fileRef
+      fileRef: todo.fileRef,
+      done: todo.done
     });
   }
 
   useEffect(() => {
-    // const dbRef = ref(getDatabase(app));
-    //   get(child(dbRef, `todos/`)).then((snapshot) => {
-    //     console.log(snapshot)
-    //     if (snapshot.exists()) {
-    //       console.log(snapshot.val());
-    //     } else {
-    //       console.log("No data available");
-    //     }
-    //   }).catch((error) => {
-    //     console.error(error);
-    //   });
     const db = getDatabase(app);
     const starCountRef = ref(db, 'todos/');
     onValue(starCountRef, (snapshot) => {
@@ -57,6 +53,7 @@ export default function App() {
 
       if (data) {
         const arr = [];
+        // eslint-disable-next-line no-unused-vars
         for (const [key, value] of Object.entries(data)) {
           arr.push(value);
         }
@@ -66,7 +63,7 @@ export default function App() {
   }, []);
 
   return (
-    <Context.Provider value={{todos, addTodo, editTodo}}>
+    <Context.Provider value={{todos, addTodo, editTodo, deleteTodo}}>
       <div className="App">
         <header className="App-header">
           Todo-WUP

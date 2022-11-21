@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
 import { Context } from '../App';
-import Todo from './Todo'
+import Todo from './Todo';
 
 export default function ListTodo() {
   const context = useContext(Context);
 
-  console.log(context);
   return (
     <ul>
       {context.todos.map((e, i) => (
@@ -14,5 +13,5 @@ export default function ListTodo() {
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};

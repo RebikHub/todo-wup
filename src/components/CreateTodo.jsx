@@ -13,8 +13,9 @@ export default function CreateTodo({closeCreate, item = null}) {
     title: '',
     description: '',
     date: '',
-    file: null,
-    fileRef: null
+    file: '',
+    fileRef: '',
+    done: false
   });
   const [load, setLoad] = useState(0);
 
@@ -22,46 +23,46 @@ export default function CreateTodo({closeCreate, item = null}) {
     if (item) {
       setTodo(item);
     };
-  }, []);
+  }, [item]);
+
+  function inputFile() {
+    const storage = getStorage(app);
+    const fileName = fileInput.current.files[0].name;
+    const path = `todos/${todo.id}/${fileName}`;
+    const fileRef = ref(storage, path)
+    uploadBytesResumable(fileRef, fileInput.current.files[0])
+      .on('state_changed', 
+        (snapshot) => {
+          setLoad((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        }, 
+        (error) => {
+          console.log(error);
+        }, 
+        () => {
+          getDownloadURL(ref(storage, path))
+            .then((url) => {
+              setLoad(0);
+              setTodo({
+                ...todo,
+                file: fileName,
+                fileRef: url
+              });
+            });
+        }
+      );
+  }
 
   function saveTodo() {
-    const storage = getStorage(app);
-    if (fileInput.current && !item) {
-      const fileName = fileInput.current.files[0].name;
-      const path = `todos/${todo.id}/${fileName}`;
-      const fileRef = ref(storage, path)
-      uploadBytesResumable(fileRef, fileInput.current.files[0])
-        .on('state_changed', 
-          (snapshot) => {
-            setLoad((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          }, 
-          (error) => {
-            console.log(error);
-          }, 
-          () => {
-            getDownloadURL(ref(storage, path))
-              .then((url) => {
-                setLoad(0);
-                context.addTodo({
-                  ...todo,
-                  file: fileName,
-                  fileRef: url
-                });
-                closeCreate();
-              });
-          }
-        );
-    } else if (item) {
+    if (item) {
       const {ref} = require('firebase/database');
       const db = getDatabase(app);
       const updates = {};
       updates['todos/' + item.id] = todo;   
       update(ref(db), updates);
-      closeCreate();
     } else {
       context.addTodo(todo);
-      closeCreate();
     };
+    closeCreate();
   };
 
   if (load > 0) {
@@ -88,7 +89,7 @@ export default function CreateTodo({closeCreate, item = null}) {
         value={todo.date}
         onChange={(e) => setTodo({...todo, date: e.target.value})}
       />
-      {item ? null : <input type="file" placeholder='Add file' ref={fileInput}/>}
+      {item ? null : <input type="file" placeholder='Add file' onChange={inputFile} ref={fileInput}/>}
       <button type='button'
         onClick={saveTodo}
       >Save todo</button>

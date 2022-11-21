@@ -1,10 +1,20 @@
+import { getDatabase, ref, update } from 'firebase/database';
 import React, { useContext, useEffect, useState } from 'react'
 import { Context } from '../App';
+import { app } from '../firebase';
 
 export default function Todo({item}) {
   const [desc, setDesc] = useState(false);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(item.done);
   const context = useContext(Context);
+
+  function doneTodo() {
+    const db = getDatabase(app);
+    const updates = {};
+    updates['todos/' + item.id + '/done'] = !done;   
+    update(ref(db), updates);
+    setDone(!done);
+  };
 
   useEffect(() => {
     const nowDate = new Date().getTime();
@@ -15,8 +25,8 @@ export default function Todo({item}) {
   }, [item.date]);
 
   return (
-    <div className={done ? 'Todo-done' : 'Todo'}>
-      <div className={done ? 'Todo-img-done' : 'Todo-img'} onClick={() => setDone(!done)}/>
+    <div className={item.done ? 'Todo-done' : 'Todo'}>
+      <div className={item.done ? 'Todo-img-done' : 'Todo-img'} onClick={doneTodo}/>
       <div className='Todo-body'>
         <div className='Todo-item'>
           <h5 onClick={() => setDesc(!desc)}>{item.title}</h5>
@@ -27,7 +37,7 @@ export default function Todo({item}) {
       </div>
       <div className='Todo-buttons'>
         <button onClick={() => context.editTodo(item)} disabled={done}>Edit</button>
-        <button>Delete</button>
+        <button onClick={() => context.deleteTodo(item.id)}>Delete</button>
       </div>
     </div>
   )
