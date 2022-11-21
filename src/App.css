@@ -53,6 +53,11 @@ textarea {
   text-decoration: line-through;
 }
 
+.Todo-done > div > div > a {
+  color: #d9d9d9;
+  text-decoration: none;
+}
+
 .Todo-img, .Todo-img-done {
   display: flex;
   width: 30px;
@@ -70,30 +75,42 @@ textarea {
   background-position: center;
 }
 
-.Todo-body > h6 {
+.Todo-item > h5 {
+  text-transform: capitalize;
   cursor: pointer;
   margin-top: auto;
 }
 
-.Todo-body > a {
+.Todo-item > a {
   font-size: 8px;
   margin-top: auto;
 }
 
-.Todo-body {
-  margin-right: auto;
-  max-width: 70%;
-  min-height: 100%;
+.Todo-item {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
+}
+
+.Todo-body {
+  margin-right: auto;
+  width: 385px;
+  justify-content: space-between;
+  min-height: 100%;
+  display: flex;
   padding-bottom: 5px;
+}
+
+.Todo-body > span {
+  display: flex;
+  align-items: flex-end;
+  font-size: 12px;
 }
 
 .Todo-description {
   max-width: 100%;
   word-wrap: break-word;
+  font-size: 12px;
 }
 
 .Todo-buttons {

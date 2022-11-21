@@ -1,11 +1,11 @@
-import { addDoc, collection } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getDatabase, update } from 'firebase/database';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { nanoid } from 'nanoid';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../App';
-import { db, storage } from '../firebase';
+import { app } from '../firebase';
 
-export default function CreateTodo({closeCreate}) {
+export default function CreateTodo({closeCreate, item = null}) {
   const context = useContext(Context);
   const fileInput = useRef();
   const [todo, setTodo] = useState({
@@ -16,29 +16,62 @@ export default function CreateTodo({closeCreate}) {
     file: null,
     fileRef: null
   });
+  const [load, setLoad] = useState(0);
 
-  async function saveTodo() {
-    const storage = getStorage();
-    const path = `todos/${todo.id}/${fileInput.current.files[0].name}`;
-    const fileRef = ref(storage, path)
-    uploadBytes(fileRef, fileInput.current.files[0]).then((snapshot) => {
-      console.log('Uploaded a blob or file!', snapshot);
-      getDownloadURL(ref(storage, path))
-      .then((url) => {
-        console.log(url)
-        context.addTodo({
-          ...todo,
-          file: fileInput.current.files[0].name,
-          fileRef: url
-        });
-        closeCreate();
-      });
-    });
+  useEffect(() => {
+    if (item) {
+      setTodo(item);
+    };
+  }, []);
 
-
-    console.log(fileInput.current.files[0]);
+  function saveTodo() {
+    const storage = getStorage(app);
+    if (fileInput.current && !item) {
+      const fileName = fileInput.current.files[0].name;
+      const path = `todos/${todo.id}/${fileName}`;
+      const fileRef = ref(storage, path)
+      uploadBytesResumable(fileRef, fileInput.current.files[0])
+        .on('state_changed', 
+          (snapshot) => {
+            setLoad((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          }, 
+          (error) => {
+            console.log(error);
+          }, 
+          () => {
+            getDownloadURL(ref(storage, path))
+              .then((url) => {
+                setLoad(0);
+                context.addTodo({
+                  ...todo,
+                  file: fileName,
+                  fileRef: url
+                });
+                closeCreate();
+              });
+          }
+        );
+    } else if (item) {
+      const {ref} = require('firebase/database');
+      const db = getDatabase(app);
+      const updates = {};
+      updates['todos/' + item.id] = todo;   
+      update(ref(db), updates);
+      closeCreate();
+    } else {
+      context.addTodo(todo);
+      closeCreate();
+    };
   };
 
+  if (load > 0) {
+    return (
+      <>
+        <label htmlFor="file">Upload progress: </label>
+        <progress id="file" max="100" value={load}/>
+      </>
+    )
+  }
 
   return (
     <div className='Create-todo'>
@@ -55,7 +88,7 @@ export default function CreateTodo({closeCreate}) {
         value={todo.date}
         onChange={(e) => setTodo({...todo, date: e.target.value})}
       />
-      <input type="file" placeholder='Add file' ref={fileInput}/>
+      {item ? null : <input type="file" placeholder='Add file' ref={fileInput}/>}
       <button type='button'
         onClick={saveTodo}
       >Save todo</button>
