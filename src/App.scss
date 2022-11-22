@@ -1,4 +1,4 @@
-@media (max-width: 480px) {
+@media (min-width: 585px) {
   .Create-todo {
     width: 50%;
   }
@@ -7,7 +7,18 @@
     width: 50%;
   }
 }
-@media (min-width: 481px) {
+
+@media (min-width: 381px) and (max-width: 584px) {
+  .Create-todo {
+    width: 65%;
+  }
+
+  .Todo, .Todo-done {
+    width: 75%;
+  }
+}
+
+@media (max-width: 380px) {
   .Create-todo {
     width: 80%;
   }
