@@ -28,7 +28,7 @@ export default function CreateTodo({closeCreate, item = null}) {
   function inputFile() {
     const storage = getStorage(app);
     const fileName = fileInput.current.files[0].name;
-    const path = `todos/${todo.id}/${fileName}`;
+    const path = `todo-files/${todo.id}/${fileName}`;
     const fileRef = ref(storage, path)
     uploadBytesResumable(fileRef, fileInput.current.files[0])
       .on('state_changed', 
@@ -65,15 +65,6 @@ export default function CreateTodo({closeCreate, item = null}) {
     closeCreate();
   };
 
-  if (load > 0) {
-    return (
-      <>
-        <label htmlFor="file">Upload progress: </label>
-        <progress id="file" max="100" value={load}/>
-      </>
-    )
-  }
-
   return (
     <div className='Create-todo'>
       <h5>Create To Do</h5>
@@ -89,9 +80,14 @@ export default function CreateTodo({closeCreate, item = null}) {
         value={todo.date}
         onChange={(e) => setTodo({...todo, date: e.target.value})}
       />
-      {item ? null : <input type="file" placeholder='Add file' onChange={inputFile} ref={fileInput}/>}
+      {item ? null : 
+      <>
+        {load > 0 ? <progress id="file" max="100" value={load}/> : null}
+        <input className={load > 0 ? 'none' : ''} type="file" placeholder='Add file' onChange={inputFile} ref={fileInput}/>
+      </>}
       <button type='button'
         onClick={saveTodo}
+        disabled={load > 0}
       >Save todo</button>
     </div>
   )

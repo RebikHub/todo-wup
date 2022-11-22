@@ -37,7 +37,7 @@ export default function Todo({item}) {
       </div>
       <div className='Todo-buttons'>
         <button onClick={() => context.editTodo(item)} disabled={done}>Edit</button>
-        <button onClick={() => context.deleteTodo(item.id)}>Delete</button>
+        <button onClick={() => context.deleteTodo(item)}>Delete</button>
       </div>
     </div>
   )

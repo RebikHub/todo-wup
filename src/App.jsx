@@ -1,4 +1,5 @@
 import { getDatabase, onValue, ref, remove, set } from 'firebase/database';
+import { deleteObject, getStorage } from 'firebase/storage';
 import { createContext, useEffect, useState } from 'react';
 import './App.css';
 import CreateTodo from './components/CreateTodo';
@@ -13,6 +14,7 @@ export default function App() {
   const [item, setItem] = useState(null);
 
   function addTodo(todo) {
+    console.log('add todo');
     setTodos([...todos, todo]);
     writeTodoToDB(todo);
   };
@@ -26,8 +28,24 @@ export default function App() {
     setItem(todo);
   };
 
-  function deleteTodo(id) {
-    const db = getDatabase();
+  function deleteTodo(item) {
+    if (item.file) {
+      removeFileStorage(item.id, item.file);
+    };
+    removeItemDb(item.id);
+  };
+
+  async function removeFileStorage(id, name) {
+    const { ref } = require('firebase/storage');
+    const storage = getStorage(app);
+    const path = `todo-files/${id}/${name}`;
+    const fileRef = ref(storage, path);
+    deleteObject(fileRef);
+  };
+
+  async function removeItemDb(id) {
+    const { ref } = require('firebase/database');
+    const db = getDatabase(app);
     const todoRef = ref(db, 'todos/' + id);
     remove(todoRef);
   };
@@ -43,21 +61,21 @@ export default function App() {
       fileRef: todo.fileRef,
       done: todo.done
     });
-  }
+  };
 
   useEffect(() => {
     const db = getDatabase(app);
-    const starCountRef = ref(db, 'todos/');
-    onValue(starCountRef, (snapshot) => {
+    const valueDb = ref(db, 'todos/');
+    onValue(valueDb, (snapshot) => {
       const data = snapshot.val();
-
       if (data) {
         const arr = [];
-        // eslint-disable-next-line no-unused-vars
         for (const [key, value] of Object.entries(data)) {
           arr.push(value);
         }
         setTodos([...arr])
+      } else {
+        setTodos([]);
       }
     });
   }, []);
