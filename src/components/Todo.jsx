@@ -20,7 +20,8 @@ export default function Todo({item}) {
     const nowDate = new Date().getTime();
     const targetDate = new Date(item.date).getTime();
     if (nowDate > targetDate) {
-      setDone(true);
+      // setDone(true);
+      doneTodo();
     }
   }, [item.date]);
 
