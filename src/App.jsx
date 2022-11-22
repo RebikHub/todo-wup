@@ -1,7 +1,7 @@
 import { getDatabase, onValue, ref, remove, set } from 'firebase/database';
 import { deleteObject, getStorage } from 'firebase/storage';
 import { createContext, useEffect, useState } from 'react';
-import './App.css';
+import './App.scss';
 import CreateTodo from './components/CreateTodo';
 import ListTodo from './components/ListTodo';
 import { app } from './firebase';

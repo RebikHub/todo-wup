@@ -20,20 +20,20 @@
   width: 50%;
   flex-direction: column;
   margin: auto;
-}
 
-.Create-todo > input {
-  margin-bottom: 15px;
+  input {
+    margin-bottom: 15px;
+  }
+
+  button {
+    width: 30%;
+    align-self: flex-end;
+  }
 }
 
 textarea {
   resize: vertical;
   margin-bottom: 15px;
-}
-
-.Create-todo > button {
-  width: 30%;
-  align-self: flex-end;
 }
 
 .Create-date {
@@ -51,11 +51,15 @@ textarea {
 .Todo-done {
   color: #d9d9d9;
   text-decoration: line-through;
-}
 
-.Todo-done > div > div > a {
-  color: #d9d9d9;
-  text-decoration: none;
+  div {
+    div {
+      a {
+        color: #d9d9d9;
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 .Todo-img, .Todo-img-done {
@@ -75,21 +79,21 @@ textarea {
   background-position: center;
 }
 
-.Todo-item > h5 {
-  text-transform: capitalize;
-  cursor: pointer;
-  margin-top: auto;
-}
-
-.Todo-item > a {
-  font-size: 8px;
-  margin-top: auto;
-}
-
 .Todo-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  h5 {
+    text-transform: capitalize;
+    cursor: pointer;
+    margin-top: auto;
+  }
+
+  a {
+    font-size: 8px;
+    margin-top: auto;
+  }
 }
 
 .Todo-body {
@@ -99,12 +103,12 @@ textarea {
   min-height: 100%;
   display: flex;
   padding-bottom: 5px;
-}
 
-.Todo-body > span {
-  display: flex;
-  align-items: flex-end;
-  font-size: 12px;
+  span {
+    display: flex;
+    align-items: flex-end;
+    font-size: 12px;
+  }
 }
 
 .Todo-description {
@@ -115,10 +119,10 @@ textarea {
 
 .Todo-buttons {
   align-self: center;
-}
 
-.Todo-buttons > button {
-  margin-left: 10px;
+  button {
+    margin-left: 10px;
+  }
 }
 
 .none {
