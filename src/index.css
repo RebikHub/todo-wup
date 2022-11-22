@@ -15,3 +15,14 @@ body {
 button {
   cursor: pointer;
 }
+
+@media (max-width: 480px) {
+  * {
+    font-size: 12px;
+  }
+}
+@media (min-width: 481px) {
+  * {
+    font-size: 16px;
+  }
+}

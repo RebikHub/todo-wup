@@ -1,3 +1,22 @@
+@media (max-width: 480px) {
+  .Create-todo {
+    width: 50%;
+  }
+
+  .Todo, .Todo-done {
+    width: 50%;
+  }
+}
+@media (min-width: 481px) {
+  .Create-todo {
+    width: 80%;
+  }
+
+  .Todo, .Todo-done {
+    width: 95%;
+  }
+}
+
 .App {
   text-align: center;
 }
@@ -17,7 +36,6 @@
 
 .Create-todo {
   display: flex;
-  width: 50%;
   flex-direction: column;
   margin: auto;
 
@@ -41,7 +59,6 @@ textarea {
 }
 
 .Todo, .Todo-done {
-  width: 50%;
   display: flex;
   justify-content: center;
   margin: 10px auto 0 auto;
