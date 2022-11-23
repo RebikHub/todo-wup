@@ -23,6 +23,16 @@ export default function CreateTodo({closeCreate, item = null}) {
     if (item) {
       setTodo(item);
     };
+
+    return setTodo({
+      id: '',
+      title: '',
+      description: '',
+      date: '',
+      file: '',
+      fileRef: '',
+      done: false
+    })
   }, [item]);
 
   function inputFile() {
