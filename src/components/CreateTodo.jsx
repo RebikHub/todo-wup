@@ -23,16 +23,6 @@ export default function CreateTodo({closeCreate, item = null}) {
     if (item) {
       setTodo(item);
     };
-
-    return setTodo({
-      id: '',
-      title: '',
-      description: '',
-      date: '',
-      file: '',
-      fileRef: '',
-      done: false
-    })
   }, [item]);
 
   function inputFile() {
@@ -72,6 +62,15 @@ export default function CreateTodo({closeCreate, item = null}) {
     } else {
       context.addTodo(todo);
     };
+    setTodo({
+      id: '',
+      title: '',
+      description: '',
+      date: '',
+      file: '',
+      fileRef: '',
+      done: false
+    })
     closeCreate();
   };
 
@@ -81,10 +80,12 @@ export default function CreateTodo({closeCreate, item = null}) {
       <input type="text" placeholder='Title todo'
         value={todo.title}
         onChange={(e) => setTodo({...todo, title: e.target.value})}
+        required
       />
       <textarea type="text" placeholder='Description todo'
         value={todo.description}
         onChange={(e) => setTodo({...todo, description: e.target.value})}
+        required
       />
       <input className='Create-date' type="date" placeholder='Date end todo'
         value={todo.date}
